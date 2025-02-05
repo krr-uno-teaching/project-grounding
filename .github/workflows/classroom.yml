@@ -1,0 +1,118 @@
+name: Autograding Tests
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      # This is where you place your autograding tests
+      # For more information on this runner, see the documentation at: https://github.com/classroom-resources/autograding-io-grader
+      #
+      # For example, you could run a test suite like this:
+      # - name: Run tests
+      #   uses: classroom-resources/autograding-io-grader@v1
+      #     with:
+      #       test-name: Addition Test
+      #       id: addition-test
+      #       command: "./bin/add.sh"
+      #       input: 1 2
+      #       expected-output: 3
+      #       comparison-method: exact
+      #       timeout: 10
+    - name: Question 0a
+      id: question-0a
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 0a: group.txt exists'
+        command: 'ls group.txt'
+        timeout: '10'
+        max-score: '0'
+    - name: Question 0b
+      id: question-0b
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 0b: group.txt is not empty'
+        command: 'ls group.txt && [ -s group.txt ]'
+        timeout: '10'
+        max-score: '0'
+    - name: Question 1
+      id: question-1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 1'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=1'
+        timeout: '10'
+        max-score: '30'
+    - name: Question 2a
+      id: question-2a
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 2a'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=2a'
+        timeout: '10'
+        max-score: '10'
+    - name: Question 2b
+      id: question-2b
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 2b'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=2b'
+        timeout: '10'
+        max-score: '20'
+    - name: Question 2c
+      id: question-2c
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 2c'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=2c'
+        timeout: '10'
+        max-score: '5'
+    - name: Question 2d
+      id: question-2d
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 2d'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=2d'
+        timeout: '10'
+        max-score: '5'
+    - name: Question 3
+      id: question-3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Question 3'
+        setup-command: 'conda install python=3.9 --yes; conda install -c potassco clingo=5.7.1 --yes; conda init; /usr/share/miniconda/bin/python3.9 -m pip install clingox'
+        command: 'ls group.txt && [ -s group.txt ] && /usr/share/miniconda/bin/python3.9 autograder.py --question=3'
+        timeout: '10'
+        max-score: '30'
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      # For more information on this runner, see the documentation at https://github.com/classroom-resources/autograding-grading-reporter
+      # To output the results of the tests, you can use the
+      # autograding-grading-reporter action like this:
+      env:
+        QUESTION-0A_RESULTS: "${{steps.question-0a.outputs.result}}"
+        QUESTION-0B_RESULTS: "${{steps.question-0b.outputs.result}}"
+        QUESTION-1_RESULTS: "${{steps.question-1.outputs.result}}"
+        QUESTION-2A_RESULTS:  "${{steps.question-2a.outputs.result}}"
+        QUESTION-2B_RESULTS:  "${{steps.question-2b.outputs.result}}"
+        QUESTION-2C_RESULTS:  "${{steps.question-2c.outputs.result}}"
+        QUESTION-2D_RESULTS:  "${{steps.question-2d.outputs.result}}"
+        QUESTION-3_RESULTS:  "${{steps.question-3.outputs.result}}"
+  
+      with:
+          runners: 'question-0a,question-0b,question-1,question-2a,question-2b,question-2c,question-2d,question-3'
+
